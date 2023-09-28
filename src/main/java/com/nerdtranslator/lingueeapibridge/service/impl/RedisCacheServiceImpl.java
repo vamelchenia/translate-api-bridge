@@ -12,17 +12,17 @@ import org.springframework.stereotype.Service;
 public class RedisCacheServiceImpl implements RedisCacheService {
     private final RedisTemplate<String, String> redisTemplate;
 
-    @Cacheable(value = "apiCache", key = "{#endpoint, #resource}")
+    @Cacheable(value = "translationCache", key = "{#originalText, #from, #to}")
     @Override
-    public String getCachedResponse(String originalText, String from, String to) {
+    public String getCachedTranslation(String originalText, String from, String to) {
         String cacheKey = originalText + ":" + from + ":" + to;
         return redisTemplate.opsForValue().get(cacheKey);
     }
 
-    @CacheEvict(value = "apiCache", key = "{#endpoint, #resource}")
+    @CacheEvict(value = "translationCache", key = "{#originalText, #from, #to}")
     @Override
-    public void cacheResponse(String originalText, String from, String to, String response) {
+    public void cacheTranslation(String originalText, String from, String to, String translation) {
         String cacheKey = originalText + ":" + from + ":" + to;
-        redisTemplate.opsForValue().set(cacheKey, response);
+        redisTemplate.opsForValue().set(cacheKey, translation);
     }
 }

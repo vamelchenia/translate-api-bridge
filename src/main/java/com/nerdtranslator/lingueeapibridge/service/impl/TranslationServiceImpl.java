@@ -14,14 +14,14 @@ public class TranslationServiceImpl implements TranslationService {
 
     @Override
     public String getTranslation(String originalText, String from, String to) {
-        String cachedResponse = cacheService.getCachedResponse(originalText, from, to);
+        String cachedTranslation = cacheService.getCachedTranslation(originalText, from, to);
 
-        if (cachedResponse != null) {
-            return cachedResponse;
+        if (cachedTranslation != null) {
+            return cachedTranslation;
         } else {
-            String response = apiService.fetchDataFromApi(originalText, from, to);
-            cacheService.cacheResponse(originalText, from, to, response);
-            return response;
+            String translation = apiService.fetchDataFromApi(originalText, from, to);
+            cacheService.cacheTranslation(originalText, from, to, translation);
+            return translation;
         }
     }
 }
