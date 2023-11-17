@@ -1,18 +1,37 @@
 package com.nerdtranslator.lingueeapibridge.service.impl;
 
+import com.google.api.gax.core.CredentialsProvider;
+import com.google.auth.oauth2.ServiceAccountCredentials;
 import com.google.cloud.texttospeech.v1.*;
 import com.google.protobuf.ByteString;
 import com.nerdtranslator.lingueeapibridge.service.TextToSpeechService;
 import org.springframework.stereotype.Service;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 
 @Service
 public class TextToSpeechServiceImpl implements TextToSpeechService {
+    private static final String PATH_TO_CREDENTIALS = "src/main/resources/TextToSpeechCredentials.json";
+
+    @Override
+    public byte[] transformTextToSound(String textToTransfer, String langCode) {
+        return getSpeechFromText(textToTransfer, langCode);
+    }
 
     private byte[] getSpeechFromText(String textToTransfer, String langCode) {
         byte[] speechResult = null;
-        try (TextToSpeechClient textToSpeechClient = TextToSpeechClient.create()) {
+        CredentialsProvider credentialsProvider = () -> {
+            try (FileInputStream keyStream = new FileInputStream(PATH_TO_CREDENTIALS)) {
+                return ServiceAccountCredentials.fromStream(keyStream);
+            }
+        };
+        try (TextToSpeechClient textToSpeechClient =
+                     TextToSpeechClient
+                        .create(TextToSpeechSettings
+                                .newBuilder()
+                                .setCredentialsProvider(credentialsProvider)
+                                .build())) {
             SynthesisInput input = SynthesisInput.newBuilder()
                     .setText(textToTransfer)
                     .build();
@@ -38,8 +57,4 @@ public class TextToSpeechServiceImpl implements TextToSpeechService {
         return speechResult;
     }
 
-    @Override
-    public byte[] transformTextToSound(String textToTransfer, String langCode) {
-        return getSpeechFromText(textToTransfer, langCode);
-    }
 }
