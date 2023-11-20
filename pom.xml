@@ -16,6 +16,19 @@
     <properties>
         <java.version>17</java.version>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.google.cloud</groupId>
+                <artifactId>libraries-bom</artifactId>
+                <version>26.23.0</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
 
         <dependency>
@@ -25,6 +38,8 @@
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
+=======
+>>>>>>> 50327bf6c27d3ccb887c58d04e8a46aab661e04b
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
 
@@ -64,6 +79,10 @@
             <version>2.31.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.google.cloud</groupId>
+            <artifactId>google-cloud-translate</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
