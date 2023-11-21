@@ -1,5 +1,7 @@
 package com.nerdtranslator.lingueeapibridge.service;
 
+import com.nerdtranslator.lingueeapibridge.data.TranslationData;
+
 public interface NerdTranslatorService {
-    String getTranslation(String originalText, String originalLanguage, String targetLanguage);
+    TranslationData getTranslation(String originalText, String originalLanguage, String targetLanguage);
 }
