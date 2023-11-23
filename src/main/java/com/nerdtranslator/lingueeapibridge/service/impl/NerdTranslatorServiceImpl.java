@@ -1,7 +1,7 @@
 package com.nerdtranslator.lingueeapibridge.service.impl;
 
-import com.nerdtranslator.lingueeapibridge.service.TranslationApiService;
 import com.nerdtranslator.lingueeapibridge.service.NerdTranslatorService;
+import com.nerdtranslator.lingueeapibridge.service.TranslationApiService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
