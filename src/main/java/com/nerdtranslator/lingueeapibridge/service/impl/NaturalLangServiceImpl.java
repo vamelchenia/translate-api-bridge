@@ -19,7 +19,7 @@ import java.util.Properties;
 public class NaturalLangServiceImpl implements NaturalLangService {
 
     @Override
-    public String analyzeText(String textToAnalyze) {
+    public String analyzeTextUsingApi(String textToAnalyze) {
         return analyzeTextMethod(textToAnalyze);
     }
 
@@ -27,23 +27,23 @@ public class NaturalLangServiceImpl implements NaturalLangService {
         Properties properties = new Properties();
         Map<String, Object> credentials = new LinkedHashMap<>();
 
-        try (FileInputStream inputStream = new FileInputStream("src/main/resources/sensitive.properties")) {
+        try (FileInputStream inputStream = new FileInputStream("src/main/resources/application.properties")) {
             properties.load(inputStream);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        credentials.put("type", properties.getProperty("SPEECH_TYPE"));
-        credentials.put("project_id", properties.getProperty("SPEECH_PROJECT_ID"));
-        credentials.put("private_key_id", properties.getProperty("SPEECH_PRIVATE_KEY_ID"));
-        credentials.put("private_key", properties.getProperty("SPEECH_PRIVATE_KEY"));
-        credentials.put("client_email", properties.getProperty("SPEECH_CLIENT_EMAIL"));
-        credentials.put("client_id", properties.getProperty("SPEECH_CLIENT_ID"));
-        credentials.put("auth_uri", properties.getProperty("SPEECH_AUTH_URI"));
-        credentials.put("token_uri", properties.getProperty("SPEECH_TOKEN_URI"));
-        credentials.put("auth_provider_x509_cert_url", properties.getProperty("SPEECH_AUTH_PROVIDER_X509_CERT_URL"));
-        credentials.put("client_x509_cert_url", properties.getProperty("SPEECH_CLIENT_X509_CERT_URL"));
-        credentials.put("universe_domain", properties.getProperty("SPEECH_UNIVERSE_DOMAIN"));
+        credentials.put("type", properties.getProperty("cred_type"));
+        credentials.put("project_id", properties.getProperty("cred_project_id"));
+        credentials.put("private_key_id", properties.getProperty("cred_private_key_id"));
+        credentials.put("private_key", properties.getProperty("cred_private_key"));
+        credentials.put("client_email", properties.getProperty("cred_client_email"));
+        credentials.put("client_id", properties.getProperty("cred_client_id"));
+        credentials.put("auth_uri", properties.getProperty("cred_auth_uri"));
+        credentials.put("token_uri", properties.getProperty("cred_token_uri"));
+        credentials.put("auth_provider_x509_cert_url", properties.getProperty("cred_auth_provider_x509_cert_url"));
+        credentials.put("client_x509_cert_url", properties.getProperty("cred_client_x509_cert_url"));
+        credentials.put("universe_domain", properties.getProperty("cred_universe_domain"));
 
         return credentials;
     }
@@ -57,9 +57,8 @@ public class NaturalLangServiceImpl implements NaturalLangService {
             throw new RuntimeException("An error while Json parsing in language service");
         }
 
-        final String finalCredentialsString = credentialsString;
         CredentialsProvider credentialsProvider = () -> {
-            try (ByteArrayInputStream keyStream = new ByteArrayInputStream(finalCredentialsString.getBytes())) {
+            try (ByteArrayInputStream keyStream = new ByteArrayInputStream(credentialsString.getBytes())) {
                 return ServiceAccountCredentials.fromStream(keyStream);
             }
         };
@@ -93,6 +92,7 @@ public class NaturalLangServiceImpl implements NaturalLangService {
         if (result == null || result.isEmpty()) {
             return "undefined";
         }
+
         return result;
     }
 }
