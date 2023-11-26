@@ -26,7 +26,7 @@ public class TextToSpeechApiServiceImpl implements TextToSpeechApiService {
     public byte[] transformTextToSound(String textToTransfer, String langCode) {
         byte[] speechResult;
         CredentialsProvider credentialsProvider = () -> {
-            try (ByteArrayInputStream keyStream = new ByteArrayInputStream(authenticationProvider.getAuthorizationData())) {
+            try (ByteArrayInputStream keyStream = new ByteArrayInputStream(authenticationProvider.getAuthenticationData())) {
                 return ServiceAccountCredentials.fromStream(keyStream);
             }
         };

@@ -20,7 +20,7 @@ public class AuthenticationDataProviderImpl implements AuthenticationDataProvide
     }
 
     @Override
-    public byte[] getAuthorizationData() {
+    public byte[] getAuthenticationData() {
         StringBuilder credentialsBuilder = new StringBuilder();
         credentialsBuilder.append("{");
         String currPair = String.format(JSON_PAIR_PATTERN, "type", env.getProperty("SPEECH_TYPE"));

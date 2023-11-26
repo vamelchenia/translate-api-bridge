@@ -25,7 +25,7 @@ public class NaturalLangApiServiceImpl implements NaturalLangApiService {
     public String analyzeText(String textToAnalyze) {
         String result = null;
         CredentialsProvider credentialsProvider = () -> {
-            try (ByteArrayInputStream keyStream = new ByteArrayInputStream(authenticationProvider.getAuthorizationData())) {
+            try (ByteArrayInputStream keyStream = new ByteArrayInputStream(authenticationProvider.getAuthenticationData())) {
                 return ServiceAccountCredentials.fromStream(keyStream);
             }
         };
