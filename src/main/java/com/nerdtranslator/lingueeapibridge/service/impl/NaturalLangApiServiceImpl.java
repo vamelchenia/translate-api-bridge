@@ -3,6 +3,7 @@ package com.nerdtranslator.lingueeapibridge.service.impl;
 import com.google.api.gax.core.CredentialsProvider;
 import com.google.auth.oauth2.ServiceAccountCredentials;
 import com.google.cloud.language.v1.*;
+import com.nerdtranslator.lingueeapibridge.service.AuthenticationDataProvider;
 import com.nerdtranslator.lingueeapibridge.service.NaturalLangApiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,22 +14,18 @@ import java.io.IOException;
 @Service
 public class NaturalLangApiServiceImpl implements NaturalLangApiService {
 
-    private final CredentialsProviderImpl provider;
+    private final AuthenticationDataProvider authenticationProvider;
 
     @Autowired
-    public NaturalLangApiServiceImpl(CredentialsProviderImpl provider) {
-        this.provider = provider;
+    public NaturalLangApiServiceImpl(AuthenticationDataProvider authenticationProvider) {
+        this.authenticationProvider = authenticationProvider;
     }
 
     @Override
     public String analyzeText(String textToAnalyze) {
-        return analyzeTextMethod(textToAnalyze);
-    }
-
-    private String analyzeTextMethod(String textToAnalyze) {
         String result = null;
         CredentialsProvider credentialsProvider = () -> {
-            try (ByteArrayInputStream keyStream = new ByteArrayInputStream(provider.getAuthorizationData())) {
+            try (ByteArrayInputStream keyStream = new ByteArrayInputStream(authenticationProvider.getAuthorizationData())) {
                 return ServiceAccountCredentials.fromStream(keyStream);
             }
         };

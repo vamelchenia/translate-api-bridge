@@ -1,6 +1,6 @@
 package com.nerdtranslator.lingueeapibridge.service.impl;
 
-import com.nerdtranslator.lingueeapibridge.service.CredentialsProvider;
+import com.nerdtranslator.lingueeapibridge.service.AuthenticationDataProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
@@ -8,23 +8,19 @@ import org.springframework.stereotype.Component;
 
 @Component
 @PropertySource("classpath:sensitive.properties")
-public class CredentialsProviderImpl implements CredentialsProvider {
+public class AuthenticationDataProviderImpl implements AuthenticationDataProvider {
 
     private final Environment env;
     private static final String JSON_PAIR_PATTERN = "\"%s\": \"%s\",";
     private static final String LAST_PAIR_PATTERN = "\"%s\": \"%s\"";
 
     @Autowired
-    public CredentialsProviderImpl(Environment env) {
+    public AuthenticationDataProviderImpl(Environment env) {
         this.env = env;
     }
 
     @Override
     public byte[] getAuthorizationData() {
-        return getAuthorization();
-    }
-
-    private byte[] getAuthorization() {
         StringBuilder credentialsBuilder = new StringBuilder();
         credentialsBuilder.append("{");
         String currPair = String.format(JSON_PAIR_PATTERN, "type", env.getProperty("SPEECH_TYPE"));

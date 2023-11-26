@@ -4,6 +4,7 @@ import com.google.api.gax.core.CredentialsProvider;
 import com.google.auth.oauth2.ServiceAccountCredentials;
 import com.google.cloud.texttospeech.v1.*;
 import com.google.protobuf.ByteString;
+import com.nerdtranslator.lingueeapibridge.service.AuthenticationDataProvider;
 import com.nerdtranslator.lingueeapibridge.service.TextToSpeechApiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,22 +15,18 @@ import java.io.IOException;
 @Service
 public class TextToSpeechApiServiceImpl implements TextToSpeechApiService {
 
-    private final CredentialsProviderImpl provider;
+    private final AuthenticationDataProvider authenticationProvider;
 
     @Autowired
-    public TextToSpeechApiServiceImpl(CredentialsProviderImpl provider) {
-        this.provider = provider;
+    public TextToSpeechApiServiceImpl(AuthenticationDataProvider authenticationProvider) {
+        this.authenticationProvider = authenticationProvider;
     }
 
     @Override
     public byte[] transformTextToSound(String textToTransfer, String langCode) {
-        return getSpeechFromText(textToTransfer, langCode);
-    }
-
-    private byte[] getSpeechFromText(String textToTransfer, String langCode) {
         byte[] speechResult;
         CredentialsProvider credentialsProvider = () -> {
-            try (ByteArrayInputStream keyStream = new ByteArrayInputStream(provider.getAuthorizationData())) {
+            try (ByteArrayInputStream keyStream = new ByteArrayInputStream(authenticationProvider.getAuthorizationData())) {
                 return ServiceAccountCredentials.fromStream(keyStream);
             }
         };

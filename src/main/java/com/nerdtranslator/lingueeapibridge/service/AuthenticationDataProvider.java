@@ -1,7 +1,5 @@
 package com.nerdtranslator.lingueeapibridge.service;
 
-import org.springframework.stereotype.Component;
-
-public interface CredentialsProvider {
+public interface AuthenticationDataProvider {
     byte[] getAuthorizationData();
 }
