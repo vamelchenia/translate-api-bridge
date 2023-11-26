@@ -1,5 +1,5 @@
 package com.nerdtranslator.lingueeapibridge.service;
 
-public interface TextToSpeechService {
+public interface TextToSpeechApiService {
     byte[] transformTextToSound(String textToTransfer, String langCode);
 }
