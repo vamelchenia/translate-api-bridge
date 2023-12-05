@@ -1,38 +1,26 @@
 package com.nerdtranslator.lingueeapibridge.service.impl;
 
-import com.google.api.gax.core.CredentialsProvider;
-import com.google.auth.oauth2.ServiceAccountCredentials;
 import com.google.cloud.language.v1.*;
-import com.nerdtranslator.lingueeapibridge.service.AuthenticationDataProvider;
+import com.nerdtranslator.lingueeapibridge.service.CredentialsProviderFactory;
 import com.nerdtranslator.lingueeapibridge.service.NaturalLangApiService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 @Service
+@RequiredArgsConstructor
 public class NaturalLangApiServiceImpl implements NaturalLangApiService {
 
-    private final AuthenticationDataProvider authenticationProvider;
-
-    @Autowired
-    public NaturalLangApiServiceImpl(AuthenticationDataProvider authenticationProvider) {
-        this.authenticationProvider = authenticationProvider;
-    }
+    private final CredentialsProviderFactory authenticationProvider;
 
     @Override
     public String analyzeText(String textToAnalyze) {
         String result = null;
-        CredentialsProvider credentialsProvider = () -> {
-            try (ByteArrayInputStream keyStream = new ByteArrayInputStream(authenticationProvider.getAuthenticationData())) {
-                return ServiceAccountCredentials.fromStream(keyStream);
-            }
-        };
         try (LanguageServiceClient languageService = LanguageServiceClient.create(
                 LanguageServiceSettings
                         .newBuilder()
-                        .setCredentialsProvider(credentialsProvider)
+                        .setCredentialsProvider(authenticationProvider.getCredentialsProvider())
                         .build())) {
 
             Document document = Document
@@ -51,8 +39,7 @@ public class NaturalLangApiServiceImpl implements NaturalLangApiService {
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException("An error in language service response");
+            throw new RuntimeException("An error in language service response: " + e.getMessage());
         }
 
         if (result == null || result.isEmpty()) {
