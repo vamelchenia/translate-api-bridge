@@ -18,13 +18,18 @@ public class NerdTranslatorServiceImpl implements NerdTranslatorService {
     private final TranslationApiService translationApiService;
     private final TextToSpeechApiService textToSpeechService;
     private final NaturalLangApiService naturalLanguageApiService;
+    private final static int MAX_NUMBER_TO_GET_AUDIO = 6;
+    private final static int MAX_NUMBER_TO_GET_PART_OF_SPEECH = 2;
+    private static final int MINIMUM_WORDS_REQUIRED = 1;
+    private static final int MAX_PARTS_OF_SPEECH_TO_RETURN = 1;
 
     @Override
     public TranslationData getTranslation(String originalText, String originalLanguage, String targetLanguage) {
+
         TranslationData translationData = new TranslationData();
         List<String> originWords = getWordsList(originalText);
         int wordsCount = originWords.size();
-        if (wordsCount == 0) {
+        if (wordsCount < MINIMUM_WORDS_REQUIRED) {
             throw new RuntimeException("wrong input");
         } else {
             String singleTranslationFromApi
@@ -32,24 +37,24 @@ public class NerdTranslatorServiceImpl implements NerdTranslatorService {
             translationData.setTranslation(singleTranslationFromApi);
             List<String> translatedWords = getWordsList(singleTranslationFromApi);
             int countTranslationWords = translatedWords.size();
-            if (countTranslationWords < 6) {
+            if (countTranslationWords < MAX_NUMBER_TO_GET_AUDIO) {
                 byte[] audio = textToSpeechService.transformTextToSound(singleTranslationFromApi, originalLanguage);
                 translationData.setAudioData(audio);
-                if (countTranslationWords <= 2) {
-                    if (countTranslationWords == 1) {
-                        String partOfSpeech = naturalLanguageApiService.analyzeText(singleTranslationFromApi);
-                        translationData.setPartOfSpeech(partOfSpeech);
-                    } else {
-                        List<String> partsOfSpeech = new ArrayList<>();
-                        for (String word : translatedWords) {
-                            String partOfSpeech = naturalLanguageApiService.analyzeText(word);
-                            if (!"PRETEXT".equals(partOfSpeech)) {
-                                partsOfSpeech.add(partOfSpeech);
-                            }
+            }
+            if (countTranslationWords <= MAX_NUMBER_TO_GET_PART_OF_SPEECH) {
+                if (countTranslationWords == MINIMUM_WORDS_REQUIRED) {
+                    String partOfSpeech = naturalLanguageApiService.analyzeText(singleTranslationFromApi);
+                    translationData.setPartOfSpeech(partOfSpeech);
+                } else {
+                    List<String> partsOfSpeech = new ArrayList<>();
+                    for (String word : translatedWords) {
+                        String partOfSpeech = naturalLanguageApiService.analyzeText(word);
+                        if (!"PRETEXT".equals(partOfSpeech)) {
+                            partsOfSpeech.add(partOfSpeech);
                         }
-                        if (partsOfSpeech.size() == 1) {
-                            translationData.setPartOfSpeech(partsOfSpeech.get(0));
-                        }
+                    }
+                    if (partsOfSpeech.size() == MAX_PARTS_OF_SPEECH_TO_RETURN) {
+                        translationData.setPartOfSpeech(partsOfSpeech.get(0));
                     }
                 }
             }
