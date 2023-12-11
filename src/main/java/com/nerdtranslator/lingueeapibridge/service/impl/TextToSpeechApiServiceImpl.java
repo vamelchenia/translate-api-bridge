@@ -1,41 +1,29 @@
 package com.nerdtranslator.lingueeapibridge.service.impl;
 
-import com.google.api.gax.core.CredentialsProvider;
-import com.google.auth.oauth2.ServiceAccountCredentials;
 import com.google.cloud.texttospeech.v1.*;
 import com.google.protobuf.ByteString;
-import com.nerdtranslator.lingueeapibridge.service.AuthenticationDataProvider;
+import com.nerdtranslator.lingueeapibridge.service.CredentialsProviderFactory;
 import com.nerdtranslator.lingueeapibridge.service.TextToSpeechApiService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 @Service
+@RequiredArgsConstructor
 public class TextToSpeechApiServiceImpl implements TextToSpeechApiService {
 
-    private final AuthenticationDataProvider authenticationProvider;
-
-    @Autowired
-    public TextToSpeechApiServiceImpl(AuthenticationDataProvider authenticationProvider) {
-        this.authenticationProvider = authenticationProvider;
-    }
+    private final CredentialsProviderFactory authenticationProvider;
 
     @Override
     public byte[] transformTextToSound(String textToTransfer, String langCode) {
         byte[] speechResult;
-        CredentialsProvider credentialsProvider = () -> {
-            try (ByteArrayInputStream keyStream = new ByteArrayInputStream(authenticationProvider.getAuthenticationData())) {
-                return ServiceAccountCredentials.fromStream(keyStream);
-            }
-        };
 
         try (TextToSpeechClient textToSpeechClient =
                      TextToSpeechClient
                              .create(TextToSpeechSettings
                                      .newBuilder()
-                                     .setCredentialsProvider(credentialsProvider)
+                                     .setCredentialsProvider(authenticationProvider.getCredentialsProvider())
                                      .build())) {
             SynthesisInput input = SynthesisInput.newBuilder()
                     .setText(textToTransfer)

@@ -1,26 +1,33 @@
-package com.nerdtranslator.lingueeapibridge.service.impl;
+package com.nerdtranslator.lingueeapibridge.service;
 
-import com.nerdtranslator.lingueeapibridge.service.AuthenticationDataProvider;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.google.api.gax.core.CredentialsProvider;
+import com.google.auth.oauth2.ServiceAccountCredentials;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
+import java.io.ByteArrayInputStream;
+
 @Component
 @PropertySource("classpath:sensitive.properties")
-public class AuthenticationDataProviderImpl implements AuthenticationDataProvider {
+@RequiredArgsConstructor
+public class CredentialsProviderFactory {
 
     private final Environment env;
     private static final String JSON_PAIR_PATTERN = "\"%s\": \"%s\",";
     private static final String LAST_PAIR_PATTERN = "\"%s\": \"%s\"";
 
-    @Autowired
-    public AuthenticationDataProviderImpl(Environment env) {
-        this.env = env;
+    public CredentialsProvider getCredentialsProvider() {
+        return () -> {
+            try (ByteArrayInputStream keyStream =
+                         new ByteArrayInputStream(getAuthenticationData())) {
+                return ServiceAccountCredentials.fromStream(keyStream);
+            }
+        };
     }
 
-    @Override
-    public byte[] getAuthenticationData() {
+    private byte[] getAuthenticationData() {
         StringBuilder credentialsBuilder = new StringBuilder();
         credentialsBuilder.append("{");
         String currPair = String.format(JSON_PAIR_PATTERN, "type", env.getProperty("SPEECH_TYPE"));
