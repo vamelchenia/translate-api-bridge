@@ -6,8 +6,8 @@ import com.nerdtranslator.lingueeapibridge.service.LanguagesService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -17,11 +17,12 @@ import java.util.Map;
 public class LanguagesServiceImpl implements LanguagesService {
     @Override
     public Map<String, String> getSupportedLanguages() {
-        String filePath = "TranslationApiLanguages.json";
+        String filePath = "data/TranslationApiLanguages.json";
         Map<String, String> languageMap;
         try {
             ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode jsonNode = objectMapper.readTree(new File(filePath));
+            InputStream inputStream = getClass().getClassLoader().getResourceAsStream(filePath);
+            JsonNode jsonNode = objectMapper.readTree(inputStream);
             languageMap = getLanguageMap(jsonNode);
 
         } catch (IOException e) {
