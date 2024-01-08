@@ -1,10 +1,10 @@
-package com.nerdtranslator.lingueeapibridge;
+package com.nerdtranslator.translateapibridge;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class LingueeApiBridgeApplicationTests {
+class TranslateApiBridgeApplicationTests {
 
 	@Test
 	void contextLoads() {

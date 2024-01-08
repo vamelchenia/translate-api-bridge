@@ -1,4 +1,4 @@
-package com.nerdtranslator.lingueeapibridge.exception;
+package com.nerdtranslator.translateapibridge.exception;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;

@@ -1,13 +1,13 @@
-package com.nerdtranslator.lingueeapibridge;
+package com.nerdtranslator.translateapibridge;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class LingueeApiBridgeApplication {
+public class TranslateApiBridgeApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(LingueeApiBridgeApplication.class, args);
+        SpringApplication.run(TranslateApiBridgeApplication.class, args);
     }
 
 }

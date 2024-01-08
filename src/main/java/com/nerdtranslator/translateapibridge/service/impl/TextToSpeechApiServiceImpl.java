@@ -1,9 +1,9 @@
-package com.nerdtranslator.lingueeapibridge.service.impl;
+package com.nerdtranslator.translateapibridge.service.impl;
 
 import com.google.cloud.texttospeech.v1.*;
 import com.google.protobuf.ByteString;
-import com.nerdtranslator.lingueeapibridge.service.CredentialsProviderFactory;
-import com.nerdtranslator.lingueeapibridge.service.TextToSpeechApiService;
+import com.nerdtranslator.translateapibridge.service.CredentialsProviderFactory;
+import com.nerdtranslator.translateapibridge.service.TextToSpeechApiService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

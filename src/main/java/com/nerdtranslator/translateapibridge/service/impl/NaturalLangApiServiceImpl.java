@@ -1,8 +1,8 @@
-package com.nerdtranslator.lingueeapibridge.service.impl;
+package com.nerdtranslator.translateapibridge.service.impl;
 
 import com.google.cloud.language.v1.*;
-import com.nerdtranslator.lingueeapibridge.service.CredentialsProviderFactory;
-import com.nerdtranslator.lingueeapibridge.service.NaturalLangApiService;
+import com.nerdtranslator.translateapibridge.service.CredentialsProviderFactory;
+import com.nerdtranslator.translateapibridge.service.NaturalLangApiService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

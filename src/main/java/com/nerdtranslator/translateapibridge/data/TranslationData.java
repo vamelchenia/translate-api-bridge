@@ -1,4 +1,4 @@
-package com.nerdtranslator.lingueeapibridge.data;
+package com.nerdtranslator.translateapibridge.data;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

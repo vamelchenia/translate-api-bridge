@@ -1,4 +1,4 @@
-package com.nerdtranslator.lingueeapibridge.service;
+package com.nerdtranslator.translateapibridge.service;
 
 import com.google.api.gax.core.CredentialsProvider;
 import com.google.auth.oauth2.ServiceAccountCredentials;
