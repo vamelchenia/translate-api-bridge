@@ -49,10 +49,7 @@ public class NerdTranslatorServiceImpl implements NerdTranslatorService {
                     for (String word : translatedWords) {
                         String partOfSpeech = naturalLanguageApiService.analyzeText(word);
                         /*todo
-                        *  add analyzer for part of speech and add logic to filter some of them
-                        *  situations to fix:
-                        *  1) if a word starts with " sign then returns PUNCT part of speech */
-
+                        * https://trello.com/c/g8oaI72z/77-backend-add-analyzer-for-part-of-speech-and-add-logic-to-filter-some-of-them */
                         if (!"PRETEXT".equals(partOfSpeech)) {
                             partsOfSpeech.add(partOfSpeech);
                         }

@@ -1,5 +1,5 @@
 # Translate-api bridge
-Backend java proxy server for Nerd Translator android app to connect it with Google Cloud APIs. 
+Backend Java proxy server for Nerd Translator android app to connect it with Google Cloud APIs. 
 
 ## Table of Contents
 - [Technologies](#technologies)
@@ -108,6 +108,6 @@ To install and run the project, [Java](https://java.com/) v17+ is required.
 
 ## Project Team
 
-- [Valeriia Amelchenia](https://github.com/vamelchenia) — Senior Software QA Engineer
+- [Valeriia Amelchenia](https://github.com/vamelchenia) — Senior Software QA Engineer, founder of the project
 - [Artem Prokhorov](https://github.com/Electron3D) — Back-End Engineer
 - [Evgeny Savonkin](https://github.com/evgenysavonkin) — Back-End Engineer
