@@ -1,14 +1,12 @@
 package com.nerdtranslator.translateapibridge.data;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class TranslationData {
     private String translation;
     private byte[] audioData;
