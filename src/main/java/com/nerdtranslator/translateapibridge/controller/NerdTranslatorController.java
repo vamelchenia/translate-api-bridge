@@ -27,7 +27,7 @@ public class NerdTranslatorController {
     private final NerdTranslatorService nerdTranslatorService;
     private final LanguagesService languagesService;
 
-    @PostMapping("/{originalLanguage}-{targetLanguage}")
+    @PostMapping("/{originalLanguage}/{targetLanguage}")
     @Operation(summary = "Get translation")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
