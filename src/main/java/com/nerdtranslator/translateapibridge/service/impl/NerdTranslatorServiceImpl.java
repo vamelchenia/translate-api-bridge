@@ -1,10 +1,10 @@
-package com.nerdtranslator.lingueeapibridge.service.impl;
+package com.nerdtranslator.translateapibridge.service.impl;
 
-import com.nerdtranslator.lingueeapibridge.data.TranslationData;
-import com.nerdtranslator.lingueeapibridge.service.NaturalLangApiService;
-import com.nerdtranslator.lingueeapibridge.service.TextToSpeechApiService;
-import com.nerdtranslator.lingueeapibridge.service.TranslationApiService;
-import com.nerdtranslator.lingueeapibridge.service.NerdTranslatorService;
+import com.nerdtranslator.translateapibridge.data.TranslationData;
+import com.nerdtranslator.translateapibridge.service.NaturalLangApiService;
+import com.nerdtranslator.translateapibridge.service.TextToSpeechApiService;
+import com.nerdtranslator.translateapibridge.service.TranslationApiService;
+import com.nerdtranslator.translateapibridge.service.NerdTranslatorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +25,6 @@ public class NerdTranslatorServiceImpl implements NerdTranslatorService {
 
     @Override
     public TranslationData getTranslation(String originalText, String originalLanguage, String targetLanguage) {
-
         TranslationData translationData = new TranslationData();
         List<String> originWords = getWordsList(originalText);
         int wordsCount = originWords.size();
@@ -49,6 +48,8 @@ public class NerdTranslatorServiceImpl implements NerdTranslatorService {
                     List<String> partsOfSpeech = new ArrayList<>();
                     for (String word : translatedWords) {
                         String partOfSpeech = naturalLanguageApiService.analyzeText(word);
+                        /*todo
+                        * https://trello.com/c/g8oaI72z/77-backend-add-analyzer-for-part-of-speech-and-add-logic-to-filter-some-of-them */
                         if (!"PRETEXT".equals(partOfSpeech)) {
                             partsOfSpeech.add(partOfSpeech);
                         }
@@ -69,4 +70,3 @@ public class NerdTranslatorServiceImpl implements NerdTranslatorService {
         return Arrays.stream(str.split("\\s+")).toList();
     }
 }
-

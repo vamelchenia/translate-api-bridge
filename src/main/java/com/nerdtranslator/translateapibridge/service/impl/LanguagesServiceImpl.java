@@ -1,8 +1,8 @@
-package com.nerdtranslator.lingueeapibridge.service.impl;
+package com.nerdtranslator.translateapibridge.service.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nerdtranslator.lingueeapibridge.service.LanguagesService;
+import com.nerdtranslator.translateapibridge.service.LanguagesService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
