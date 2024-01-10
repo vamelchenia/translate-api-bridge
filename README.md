@@ -65,7 +65,7 @@ To utilize this backend Java Spring Boot proxy server for communication between 
     #### Endpoints:
 
    1. **Endpoint 1 - [POST] Post text to receive it's translation:**
-       - **Path:** `/translation/{originalLanguage}-{targetLanguage}`
+       - **Path:** `/translation/{originalLanguage}/{targetLanguage}`
        - **Description:** Post a text to translate with original language and target language codes as parameters and get translation with additional data as audio and part of speech if provided as response.
        - **Request:**
            - Method: POST
