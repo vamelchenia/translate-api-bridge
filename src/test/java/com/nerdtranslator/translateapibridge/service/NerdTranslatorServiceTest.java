@@ -80,7 +80,6 @@ class NerdTranslatorServiceTest {
 
     @Test
     void articlePlusWord2Case() {
-        //bug
         makeAssertion("le livre", "fr", "en", "the book", PartOfSpeech.NOUN);
     }
 
@@ -104,7 +103,6 @@ class NerdTranslatorServiceTest {
 
     @Test
     void compoundNounHyphenatedCase1() {
-        //bug
         makeAssertion("chou-fleur", "fr", "en", "cauliflower", PartOfSpeech.NOUN);
     }
 
@@ -169,7 +167,6 @@ class NerdTranslatorServiceTest {
 
     @Test
     void multipleMeanings3() {
-        //bug
         TranslationData actualTranslationData =
                 nerdTranslatorService.getTranslation("bon", "fr", "ru");
         List<String> possibleValues = new ArrayList<>(List.of("хороший", "талон"));
