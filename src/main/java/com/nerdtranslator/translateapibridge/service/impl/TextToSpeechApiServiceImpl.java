@@ -21,45 +21,27 @@ public class TextToSpeechApiServiceImpl implements TextToSpeechApiService {
 
     @Override
     public byte[] transformTextToSound(String textToTransfer, String langCode) {
-        byte[] speechResult = null;
-        TextToSpeechClient textToSpeechClient = null;
-        AudioEncoding audioEncoding = null;
-        try {
-            audioEncoding = AudioEncoding.MP3;
-            textToSpeechClient = configureTextToSpeechClient();
-            speechResult = getSpeechResult(textToSpeechClient, SsmlVoiceGender.NEUTRAL,
-                    audioEncoding, textToTransfer, langCode);
-        } catch (InvalidArgumentException e) {
-            byte[] result = isSuccessfulSpeechResultAgain(textToSpeechClient, audioEncoding, textToTransfer, langCode);
-            if (result != null) {
-                speechResult = result;
-            } else {
-                throw new VoiceGenderNotSupportedException("\"Voice isn't supported yet\"");
-            }
-        } catch (IOException e) {
-            throw new RuntimeException("\"The result of text to speech translation wasn't received\"");
-        } finally {
-            if (textToSpeechClient != null) {
-                textToSpeechClient.close();
-            }
-        }
+        byte[] speechResult;
+        speechResult = isSuccessfulSpeechResultAgain(AudioEncoding.MP3, textToTransfer, langCode);
         if (speechResult == null) {
-            throw new RuntimeException("\"The result of text to speech translation wasn't received\"");
+            throw new VoiceGenderNotSupportedException("\"Voice isn't supported yet\"");
         }
 
         return speechResult;
     }
 
-    private byte[] isSuccessfulSpeechResultAgain(TextToSpeechClient textToSpeechClient, AudioEncoding audioEncoding,
+    private byte[] isSuccessfulSpeechResultAgain(AudioEncoding audioEncoding,
                                                  String textToTransfer, String langCode) {
         byte[] result;
-        List<SsmlVoiceGender> genders = new ArrayList<>(List.of(SsmlVoiceGender.FEMALE, SsmlVoiceGender.MALE));
+        List<SsmlVoiceGender> genders = new ArrayList<>(List.of(SsmlVoiceGender.NEUTRAL, SsmlVoiceGender.FEMALE, SsmlVoiceGender.MALE));
         for (SsmlVoiceGender gender : genders) {
-            try {
+            try (TextToSpeechClient textToSpeechClient = configureTextToSpeechClient()) {
                 result = getSpeechResult(textToSpeechClient, gender, audioEncoding, textToTransfer, langCode);
                 return result;
             } catch (InvalidArgumentException e) {
                 continue;
+            } catch (IOException e) {
+                throw new RuntimeException("\"The result of text to speech translation wasn't received\"");
             }
         }
 
