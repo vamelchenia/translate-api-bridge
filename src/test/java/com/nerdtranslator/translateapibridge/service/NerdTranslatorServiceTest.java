@@ -52,7 +52,7 @@ class NerdTranslatorServiceTest {
 
     @Test
     void main_meaning_of_multiple_meaning_word_case_IT() {
-        makeAssertion("book", "en", "fr", "livre", PartOfSpeech.NOUN);
+        makeAssertion("book", "en", "fr", "livre");
     }
 
     @Test

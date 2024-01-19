@@ -21,31 +21,24 @@ public class TextToSpeechApiServiceImpl implements TextToSpeechApiService {
 
     @Override
     public byte[] transformTextToSound(String textToTransfer, String langCode) {
-        byte[] speechResult;
-        speechResult = isSuccessfulSpeechResultAgain(AudioEncoding.MP3, textToTransfer, langCode);
-        if (speechResult == null) {
-            throw new VoiceGenderNotSupportedException("\"Voice isn't supported yet\"");
-        }
-
-        return speechResult;
-    }
-
-    private byte[] isSuccessfulSpeechResultAgain(AudioEncoding audioEncoding,
-                                                 String textToTransfer, String langCode) {
-        byte[] result;
+        byte[] speechResult = null;
+        AudioEncoding audioEncoding = AudioEncoding.MP3;
         List<SsmlVoiceGender> genders = new ArrayList<>(List.of(SsmlVoiceGender.NEUTRAL, SsmlVoiceGender.FEMALE, SsmlVoiceGender.MALE));
         for (SsmlVoiceGender gender : genders) {
             try (TextToSpeechClient textToSpeechClient = configureTextToSpeechClient()) {
-                result = getSpeechResult(textToSpeechClient, gender, audioEncoding, textToTransfer, langCode);
-                return result;
+                speechResult = getSpeechResult(textToSpeechClient, gender, audioEncoding, textToTransfer, langCode);
+                break;
             } catch (InvalidArgumentException e) {
                 continue;
             } catch (IOException e) {
                 throw new RuntimeException("\"The result of text to speech translation wasn't received\"");
             }
         }
+        if (speechResult == null) {
+            throw new VoiceGenderNotSupportedException("\"Voice isn't supported yet\"");
+        }
 
-        return null;
+        return speechResult;
     }
 
     private byte[] getSpeechResult(TextToSpeechClient textToSpeechClient,
