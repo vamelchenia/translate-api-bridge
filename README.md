@@ -111,3 +111,44 @@ To install and run the project, [Java](https://java.com/) v17+ is required.
 - [Valeriia Amelchenia](https://github.com/vamelchenia) — Senior Software QA Engineer, founder of the project
 - [Artem Prokhorov](https://github.com/Electron3D) — Back-End Engineer
 - [Evgeny Savonkin](https://github.com/evgenysavonkin) — Back-End Engineer
+
+## How to contribute
+
+1. Create a fork of the [**Translate API bridge**](https://github.com/vamelchenia/translate-api-bridge) repository. Click on the Fork symbol at the top right corner.
+
+2. Clone your new fork of the repository in the terminal/CLI on your computer with the following command:
+
+```bash
+git clone https://github.com/<your-github-username>/translate-api-bridge.git
+```
+
+3. Navigate to the newly created project directory:
+
+```bash
+cd translate-api-bridge
+```
+
+4. Create a new local branch:
+
+```bash
+git checkout -b YourBranchName
+```
+
+5. Make your changes to the source code.
+
+6. Stage your changes and commit:
+```bash
+git add <file/folder>
+```
+
+```bash
+git commit -m "A message describing your changes"
+```
+
+7. Push your local commits to the remote repository:
+
+```bash
+git push origin YourBranchName
+```
+
+**9.** Create a Pull request by switching to the **Pull requests** tab and clicking on **New pull request** button.
