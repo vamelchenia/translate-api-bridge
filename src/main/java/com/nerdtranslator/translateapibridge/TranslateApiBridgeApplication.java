@@ -9,5 +9,4 @@ public class TranslateApiBridgeApplication {
     public static void main(String[] args) {
         SpringApplication.run(TranslateApiBridgeApplication.class, args);
     }
-
 }
