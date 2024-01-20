@@ -5,6 +5,7 @@ Backend Java proxy server for Nerd Translator android app to connect it with Goo
 - [Technologies](#technologies)
 - [Usage](#usage)
 - [Development](#development)
+- [How to contribute](#how-to-contribute)
 - [Project Team](#project-team)
 
 ## Technologies
@@ -106,12 +107,6 @@ Now, your Android application should be able to communicate seamlessly with Goog
 ### Requirements
 To install and run the project, [Java](https://java.com/) v17+ is required.
 
-## Project Team
-
-- [Valeriia Amelchenia](https://github.com/vamelchenia) — Senior Software QA Engineer, founder of the project
-- [Artem Prokhorov](https://github.com/Electron3D) — Back-End Engineer
-- [Evgeny Savonkin](https://github.com/evgenysavonkin) — Back-End Engineer
-
 ## How to contribute
 
 1. Create a fork of the [**Translate API bridge**](https://github.com/vamelchenia/translate-api-bridge) repository. Click on the Fork symbol at the top right corner.
@@ -152,3 +147,10 @@ git push origin YourBranchName
 ```
 
 **9.** Create a Pull request by switching to the **Pull requests** tab and clicking on **New pull request** button.
+
+
+## Project Team
+
+- [Valeriia Amelchenia](https://github.com/vamelchenia) — Senior Software QA Engineer, founder of the project
+- [Artem Prokhorov](https://github.com/Electron3D) — Back-End Engineer
+- [Evgeny Savonkin](https://github.com/evgenysavonkin) — Back-End Engineer
