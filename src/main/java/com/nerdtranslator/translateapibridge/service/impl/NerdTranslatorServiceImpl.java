@@ -29,44 +29,84 @@ public class NerdTranslatorServiceImpl implements NerdTranslatorService {
         List<String> originWords = getWordsList(originalText);
         int wordsCount = originWords.size();
         if (wordsCount < MINIMUM_WORDS_REQUIRED) {
-            throw new RuntimeException("wrong input");
+            throw new RuntimeException("Wrong input");
         } else {
             String singleTranslationFromApi
                 = translationApiService.getSingleTranslationFromApi(originalText, originalLanguage, targetLanguage);
             translationData.setTranslation(singleTranslationFromApi);
+
             List<String> translatedWords = getWordsList(singleTranslationFromApi);
-            int countTranslationWords = translatedWords.size();
-            if (countTranslationWords < MAX_NUMBER_TO_GET_AUDIO) {
+            if (translatedWords.size() < MAX_NUMBER_TO_GET_AUDIO) {
                 byte[] audio = textToSpeechService.transformTextToSound(singleTranslationFromApi, originalLanguage);
                 translationData.setAudioData(audio);
             }
-            if (countTranslationWords <= MAX_NUMBER_TO_GET_PART_OF_SPEECH) {
-                if (countTranslationWords == MINIMUM_WORDS_REQUIRED) {
-                    String partOfSpeech = naturalLanguageApiService.analyzeText(singleTranslationFromApi);
-                    translationData.setPartOfSpeech(partOfSpeech);
-                } else {
-                    List<String> partsOfSpeech = new ArrayList<>();
-                    for (String word : translatedWords) {
-                        String partOfSpeech = naturalLanguageApiService.analyzeText(word);
-                        /*todo
-                        * https://trello.com/c/g8oaI72z/77-backend-add-analyzer-for-part-of-speech-and-add-logic-to-filter-some-of-them */
-                        if (!"PRETEXT".equals(partOfSpeech)) {
-                            partsOfSpeech.add(partOfSpeech);
-                        }
-                    }
-                    if (partsOfSpeech.size() == MAX_PARTS_OF_SPEECH_TO_RETURN) {
-                        translationData.setPartOfSpeech(partsOfSpeech.get(0));
-                    }
-                }
+
+            String partOfSpeech = getPartOfSpeech(translatedWords);
+            if (partOfSpeech == null
+                    || "X".equals(partOfSpeech)
+                    || "UNKNOWN".equals(partOfSpeech)
+                    || "UNRECOGNIZED".equals(partOfSpeech)) {
+                translationData.setPartOfSpeech("X");
+            } else {
+                translationData.setPartOfSpeech(partOfSpeech);
             }
         }
         return translationData;
     }
 
-    public static List<String> getWordsList(String str) {
+    private List<String> getWordsList(String str) {
         if (str == null || str.isEmpty()) {
             throw new RuntimeException("Translation is empty.");
         }
         return Arrays.stream(str.split("\\s+")).toList();
+    }
+
+    private String getPartOfSpeech(List<String> translatedWords) {
+        String partOfSpeech = null;
+        int translatedWordsSize = translatedWords.size();
+        if (translatedWordsSize <= MAX_NUMBER_TO_GET_PART_OF_SPEECH) {
+            if (translatedWordsSize == MINIMUM_WORDS_REQUIRED) {
+                partOfSpeech = getForOneWord(translatedWords.get(0));
+            } else {
+                partOfSpeech = getForTwoWords(translatedWords);
+            }
+        }
+        return partOfSpeech;
+    }
+
+    private String getForOneWord(String word) {
+        if (isOnlyOneTypeOfSymbols(word)) {
+            return naturalLanguageApiService.analyzeText(word);
+        } else {
+            String mainWord = word.substring(0, word.length() - 1);
+            String lastSymbol = word.substring(word.length() - 1);
+            if (isOnlyOneTypeOfSymbols(mainWord) && lastSymbol.matches("\\p{Punct}")) {
+                return naturalLanguageApiService.analyzeText(mainWord);
+            }
+            return null;
+        }
+    }
+
+    private String getForTwoWords(List<String> translatedWords) {
+        List<String> partsOfSpeech = new ArrayList<>();
+        for (String word : translatedWords) {
+            String response = null;
+            if(isOnlyOneTypeOfSymbols(word)) {
+                response = naturalLanguageApiService.analyzeText(word);
+            }
+            if (!"DET".equals(response)) {
+                partsOfSpeech.add(response);
+            }
+        }
+        if (partsOfSpeech.size() == MAX_PARTS_OF_SPEECH_TO_RETURN) {
+            return partsOfSpeech.get(0);
+        }
+        return null;
+    }
+
+    private boolean isOnlyOneTypeOfSymbols(String word) {
+        return word.matches("\\p{L}+")
+                || word.matches("\\p{N}+")
+                || word.matches("[^\\p{L}\\p{N}]+");
     }
 }
