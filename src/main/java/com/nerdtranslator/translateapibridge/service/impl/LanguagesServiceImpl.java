@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nerdtranslator.translateapibridge.service.LanguagesService;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -15,6 +17,7 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class LanguagesServiceImpl implements LanguagesService {
+    private static final Logger log = LoggerFactory.getLogger(LanguagesServiceImpl.class);
     @Override
     public Map<String, String> getSupportedLanguages() {
         String filePath = "data/TranslationApiLanguages.json";
@@ -24,9 +27,9 @@ public class LanguagesServiceImpl implements LanguagesService {
             InputStream inputStream = getClass().getClassLoader().getResourceAsStream(filePath);
             JsonNode jsonNode = objectMapper.readTree(inputStream);
             languageMap = getLanguageMap(jsonNode);
-
         } catch (IOException e) {
-            throw new RuntimeException(e.getMessage());
+            log.error("An error occurred in LanguagesServiceImpl", e);
+            throw new RuntimeException("LanguagesServiceImpl" + e.getMessage());
         }
         return languageMap;
     }

@@ -5,6 +5,7 @@ Backend Java proxy server for Nerd Translator android app to connect it with Goo
 - [Technologies](#technologies)
 - [Usage](#usage)
 - [Development](#development)
+- [How to contribute](#how-to-contribute)
 - [Project Team](#project-team)
 
 ## Technologies
@@ -65,7 +66,7 @@ To utilize this backend Java Spring Boot proxy server for communication between 
     #### Endpoints:
 
    1. **Endpoint 1 - [POST] Post text to receive it's translation:**
-       - **Path:** `/translation/{originalLanguage}-{targetLanguage}`
+       - **Path:** `/translation/{originalLanguage}/{targetLanguage}`
        - **Description:** Post a text to translate with original language and target language codes as parameters and get translation with additional data as audio and part of speech if provided as response.
        - **Request:**
            - Method: POST
@@ -73,7 +74,7 @@ To utilize this backend Java Spring Boot proxy server for communication between 
                - `originalLanguage` (String) - Original language code to translate from
                - `targetLanguage` (String) - Target language code to translate to
            - Parameters:
-               - `originalText` (String) - Original language text that should be translated
+               - `originalText` (JSON -> RequestData) - Original language text that should be translated
        - **Response:**
            - HttpStatus with Translation data in JSON format
 
@@ -105,12 +106,6 @@ Now, your Android application should be able to communicate seamlessly with Goog
 
 ### Requirements
 To install and run the project, [Java](https://java.com/) v17+ is required.
-
-## Project Team
-
-- [Valeriia Amelchenia](https://github.com/vamelchenia) — Senior Software QA Engineer, founder of the project
-- [Artem Prokhorov](https://github.com/Electron3D) — Back-End Engineer
-- [Evgeny Savonkin](https://github.com/evgenysavonkin) — Back-End Engineer
 
 ## How to contribute
 
@@ -152,3 +147,10 @@ git push origin YourBranchName
 ```
 
 **9.** Create a Pull request by switching to the **Pull requests** tab and clicking on **New pull request** button.
+
+
+## Project Team
+
+- [Valeriia Amelchenia](https://github.com/vamelchenia) — Senior Software QA Engineer, founder of the project
+- [Artem Prokhorov](https://github.com/Electron3D) — Back-End Engineer
+- [Evgeny Savonkin](https://github.com/evgenysavonkin) — Back-End Engineer

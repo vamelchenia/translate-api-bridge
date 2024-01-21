@@ -3,10 +3,12 @@ package com.nerdtranslator.translateapibridge.service.impl;
 import com.google.api.gax.rpc.InvalidArgumentException;
 import com.google.cloud.texttospeech.v1.*;
 import com.google.protobuf.ByteString;
-import com.nerdtranslator.translateapibridge.exception.VoiceGenderNotSupportedException;
+import com.nerdtranslator.translateapibridge.exception.GoogleApiResponseException;
 import com.nerdtranslator.translateapibridge.service.CredentialsProviderFactory;
 import com.nerdtranslator.translateapibridge.service.TextToSpeechApiService;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -18,26 +20,29 @@ import java.util.List;
 public class TextToSpeechApiServiceImpl implements TextToSpeechApiService {
 
     private final CredentialsProviderFactory providerFactory;
+    private static final Logger log = LoggerFactory.getLogger(TextToSpeechApiServiceImpl.class);
 
     @Override
     public byte[] transformTextToSound(String textToTransfer, String langCode) {
         byte[] speechResult = null;
         AudioEncoding audioEncoding = AudioEncoding.MP3;
-        List<SsmlVoiceGender> genders = new ArrayList<>(List.of(SsmlVoiceGender.NEUTRAL, SsmlVoiceGender.FEMALE, SsmlVoiceGender.MALE));
+        List<SsmlVoiceGender> genders = new ArrayList<>(
+                List.of(SsmlVoiceGender.NEUTRAL, SsmlVoiceGender.FEMALE, SsmlVoiceGender.MALE));
         for (SsmlVoiceGender gender : genders) {
             try (TextToSpeechClient textToSpeechClient = configureTextToSpeechClient()) {
                 speechResult = getSpeechResult(textToSpeechClient, gender, audioEncoding, textToTransfer, langCode);
                 break;
             } catch (InvalidArgumentException e) {
-                continue;
+                log.warn("Voice gender " + gender + " isn't supported, trying the next one", e);
             } catch (IOException e) {
-                throw new RuntimeException("\"The result of text to speech translation wasn't received\"");
+                log.error("An error occurred in text to speech API response", e);
+                throw new GoogleApiResponseException("text to speech API response: " + e.getMessage());
             }
         }
         if (speechResult == null) {
-            throw new VoiceGenderNotSupportedException("\"Voice isn't supported yet\"");
+            log.error("An error occurred in text to speech API response: voice isn't supported yet");
+            throw new GoogleApiResponseException("text to speech API response: voice isn't supported yet");
         }
-
         return speechResult;
     }
 

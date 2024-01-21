@@ -27,6 +27,10 @@ public class CredentialsProviderFactory {
         };
     }
 
+    public String getProjectID() {
+        return env.getProperty("PROJECT_ID");
+    }
+
     private byte[] getAuthenticationData() {
         StringBuilder credentialsBuilder = new StringBuilder();
         credentialsBuilder.append("{");
