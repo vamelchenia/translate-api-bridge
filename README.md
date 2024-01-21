@@ -74,7 +74,7 @@ To utilize this backend Java Spring Boot proxy server for communication between 
                - `originalLanguage` (String) - Original language code to translate from
                - `targetLanguage` (String) - Target language code to translate to
            - Parameters:
-               - `originalText` (String) - Original language text that should be translated
+               - `originalText` (JSON -> RequestData) - Original language text that should be translated
        - **Response:**
            - HttpStatus with Translation data in JSON format
 

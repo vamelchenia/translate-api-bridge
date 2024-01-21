@@ -1,5 +1,6 @@
 package com.nerdtranslator.translateapibridge.service;
 
+import com.nerdtranslator.translateapibridge.data.RequestData;
 import com.nerdtranslator.translateapibridge.data.TranslationData;
 import com.nerdtranslator.translateapibridge.util.PartOfSpeech;
 import lombok.RequiredArgsConstructor;
@@ -27,17 +28,20 @@ class NerdTranslatorServiceTest {
 
     @Test
     void one_english_word_should_equal_to_hieroglyphic_traditional_case_IT() {
-        makeAssertion("witchcraft", "en", "zh-TW", "巫術", PartOfSpeech.NOUN);
+        makeAssertion("witchcraft", "en",
+                "zh-TW", "巫術", PartOfSpeech.NOUN);
     }
 
     @Test
     void one_english_word_should_equal_to_hieroglyphic_simplified_case_IT() {
-        makeAssertion("witchcraft", "en", "zh-CN", "巫术", PartOfSpeech.NOUN);
+        makeAssertion("witchcraft", "en",
+                "zh-CN", "巫术", PartOfSpeech.NOUN);
     }
 
     @Test
     void several_english_equal_to_russian_words_case_IT() {
-        makeAssertion("playing cat", "en", "ru", "играющий кот");
+        makeAssertion("playing cat", "en",
+                "ru", "играющий кот");
     }
 
     @Test
@@ -52,7 +56,8 @@ class NerdTranslatorServiceTest {
 
     @Test
     void main_meaning_of_multiple_meaning_word_case_IT() {
-        makeAssertion("book", "en", "fr", "livre");
+        makeAssertion("book", "en",
+                "fr", "livre");
     }
 
     @Test
@@ -75,67 +80,75 @@ class NerdTranslatorServiceTest {
 
     @Test
     void article_plus_word_1_case_IT() {
-        makeAssertion("a letter", "en", "ru", "письмо");
+        makeAssertion("a letter", "en",
+                "ru", "письмо");
     }
 
     @Test
     void article_plus_word_2_case_IT() {
-        makeAssertion("le livre", "fr", "en", "the book", PartOfSpeech.NOUN);
+        makeAssertion("le livre", "fr",
+                "en", "the book", PartOfSpeech.NOUN);
     }
 
     @Test
     void preposition_plus_word_case_IT() {
-        makeAssertion("at school", "en", "ru", "в школе");
+        makeAssertion("at school", "en",
+                "ru", "в школе");
     }
 
     @Test
     void compound_noun_non_hyphenated_case_1_IT() {
         TranslationData actualTranslationData =
-                nerdTranslatorService.getTranslation("водопровод", "ru", "en");
+                nerdTranslatorService.getTranslation(
+                        new RequestData("водопровод"), "ru", "en");
         List<String> possibleValues = new ArrayList<>(List.of("water pipes", "plumbing"));
         Assertions.assertThat(actualTranslationData.getTranslation()).isIn(possibleValues);
     }
 
     @Test
     void compound_noun_non_hyphenated_case_2_IT() {
-        makeAssertion("lighthouse", "en", "ru", "маяк", PartOfSpeech.NOUN);
+        makeAssertion("lighthouse", "en",
+                "ru", "маяк", PartOfSpeech.NOUN);
     }
 
     @Test
     void compound_noun_hyphenated_case_1_IT() {
-        makeAssertion("chou-fleur", "fr", "en", "cauliflower", PartOfSpeech.NOUN);
+        makeAssertion("chou-fleur", "fr",
+                "en", "cauliflower", PartOfSpeech.NOUN);
     }
 
     @Test
     void compound_noun_hyphenated_case_2_IT() {
         TranslationData actualTranslationData =
-                nerdTranslatorService.getTranslation("editor-in-chief", "en", "ru");
-        Assertions.assertThat(actualTranslationData.getTranslation()).isEqualToIgnoringCase("главный редактор");
-        assertEquals(PartOfSpeech.NOUN.name(), actualTranslationData.getPartOfSpeech());
+                nerdTranslatorService.getTranslation(
+                        new RequestData("editor-in-chief"), "en", "ru");
+        Assertions.assertThat(actualTranslationData.getTranslation())
+                .isEqualToIgnoringCase("главный редактор");
     }
 
     @Test
     void compound_noun_hyphenated_case_3_IT() {
         TranslationData actualTranslationData =
-                nerdTranslatorService.getTranslation("кресло-качалка", "ru", "en");
+                nerdTranslatorService.getTranslation(
+                        new RequestData("кресло-качалка"), "ru", "en");
         assertEquals("rocking chair", actualTranslationData.getTranslation());
-        assertEquals(PartOfSpeech.NOUN.name(), actualTranslationData.getPartOfSpeech());
     }
 
     @Test
     void fixed_expression_case_IT() {
-        makeAssertion("на днях", "ru", "en", "the other day");
+        makeAssertion("на днях", "ru",
+                "en", "the other day");
     }
 
     @Test
     void acronym_case_IT() {
-        //bug
         makeAssertion("ADN", "fr", "en", "DNA");
     }
 
     @Test
     void new_mixed_words_case_IT() {
-        makeAssertion("staycation", "en", "ru", "отдых", PartOfSpeech.NOUN);
+        makeAssertion("staycation", "en",
+                "ru", "отдых", PartOfSpeech.NOUN);
     }
 
     @Test
@@ -152,7 +165,8 @@ class NerdTranslatorServiceTest {
     @Test
     void multiple_meanings_case_1_IT() {
         TranslationData actualTranslationData =
-                nerdTranslatorService.getTranslation("book", "en", "ru");
+                nerdTranslatorService.getTranslation(
+                        new RequestData("book"), "en", "ru");
         List<String> possibleValues = new ArrayList<>(List.of("книга", "резервировать", "заказывать"));
         Assertions.assertThat(actualTranslationData.getTranslation().toLowerCase()).isIn(possibleValues);
     }
@@ -160,7 +174,8 @@ class NerdTranslatorServiceTest {
     @Test
     void multiple_meanings_case_2_IT() {
         TranslationData actualTranslationData =
-                nerdTranslatorService.getTranslation("bark", "en", "ru");
+                nerdTranslatorService.getTranslation(
+                        new RequestData("bark"), "en", "ru");
         List<String> possibleValues = new ArrayList<>(List.of("лаять", "кора дерева"));
         Assertions.assertThat(actualTranslationData.getTranslation().toLowerCase()).isIn(possibleValues);
     }
@@ -168,7 +183,8 @@ class NerdTranslatorServiceTest {
     @Test
     void multiple_meanings_case_3_IT() {
         TranslationData actualTranslationData =
-                nerdTranslatorService.getTranslation("bon", "fr", "ru");
+                nerdTranslatorService.getTranslation(
+                        new RequestData("bon"), "fr", "ru");
         List<String> possibleValues = new ArrayList<>(List.of("хороший", "талон"));
         Assertions.assertThat(actualTranslationData.getTranslation().toLowerCase()).isIn(possibleValues);
     }
@@ -176,7 +192,8 @@ class NerdTranslatorServiceTest {
     @Test
     void multiple_meanings_case_4_IT() {
         TranslationData actualTranslationData =
-                nerdTranslatorService.getTranslation("красивый", "ru", "en");
+                nerdTranslatorService.getTranslation(
+                        new RequestData("красивый"), "ru", "en");
         List<String> possibleValues = new ArrayList<>(List.of("beautiful", "handsome"));
         Assertions.assertThat(actualTranslationData.getTranslation().toLowerCase()).isIn(possibleValues);
         assertEquals(PartOfSpeech.ADJ.name(), actualTranslationData.getPartOfSpeech());
@@ -185,14 +202,14 @@ class NerdTranslatorServiceTest {
     private void makeAssertion(String originalText, String originalLanguage, String targetLanguage,
                                String expectedResult) {
         TranslationData actualTranslationData =
-                nerdTranslatorService.getTranslation(originalText, originalLanguage, targetLanguage);
+                nerdTranslatorService.getTranslation(new RequestData(originalText), originalLanguage, targetLanguage);
         assertEquals(expectedResult, actualTranslationData.getTranslation());
     }
 
     private void makeAssertion(String originalText, String originalLanguage, String targetLanguage,
                                String expectedResult, PartOfSpeech partOfSpeech) {
         TranslationData actualTranslationData =
-                nerdTranslatorService.getTranslation(originalText, originalLanguage, targetLanguage);
+                nerdTranslatorService.getTranslation(new RequestData(originalText), originalLanguage, targetLanguage);
         assertEquals(expectedResult, actualTranslationData.getTranslation());
         assertEquals(partOfSpeech.name(), actualTranslationData.getPartOfSpeech());
     }

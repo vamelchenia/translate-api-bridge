@@ -21,15 +21,20 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, errorMessage);
     }
 
+    @ExceptionHandler(GoogleApiResponseException.class)
+    public ResponseEntity<Object> handleGoogleApiResponseException(GoogleApiResponseException ex) {
+        String errorMessage = "Bad gateway, an error occurred in " + ex.getMessage();
+        return buildErrorResponse(HttpStatus.BAD_GATEWAY, errorMessage);
+    }
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<Object> handleBadRequestException(BadRequestException ex) {
+        String errorMessage = "Bad request: " + ex.getMessage();
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, errorMessage);
+    }
+
     private static ResponseEntity<Object> buildErrorResponse(HttpStatus httpStatus, String message) {
         ErrorResponse response = new ErrorResponse(httpStatus.value(), httpStatus.getReasonPhrase(), message);
         return ResponseEntity.status(httpStatus.value()).body(response);
-    }
-
-    private static ResponseEntity<Object> buildErrorArrayResponse(String[] message) {
-        ErrorArrayResponse arrayResponse = new ErrorArrayResponse(
-                HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(), message);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST.value()).body(arrayResponse);
     }
 
     @Getter
