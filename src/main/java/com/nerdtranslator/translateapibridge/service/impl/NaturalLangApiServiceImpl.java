@@ -20,6 +20,7 @@ public class NaturalLangApiServiceImpl implements NaturalLangApiService {
 
     @Override
     public String analyzeText(String textToAnalyze) {
+        log.info("NaturalLangApiServiceImpl analyzeText start");
         String result = null;
         try (LanguageServiceClient languageService = LanguageServiceClient.create(
                 LanguageServiceSettings
@@ -46,6 +47,7 @@ public class NaturalLangApiServiceImpl implements NaturalLangApiService {
             log.error("An error occurred in natural language API response", e);
             throw new GoogleApiResponseException("natural language API response: " + e.getMessage());
         }
+        log.info("NaturalLangApiServiceImpl analyzeText end");
         return result;
     }
 }

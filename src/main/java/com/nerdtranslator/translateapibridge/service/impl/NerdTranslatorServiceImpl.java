@@ -30,6 +30,7 @@ public class NerdTranslatorServiceImpl implements NerdTranslatorService {
 
     @Override
     public TranslationData getTranslation(RequestData requestData, String originalLanguage, String targetLanguage) {
+        log.info("NerdTranslatorServiceImpl getTranslation start");
         TranslationData translationData = new TranslationData();
         String originalText = requestData.getOriginalText();
         List<String> originWords = getWordsList(originalText);
@@ -65,6 +66,7 @@ public class NerdTranslatorServiceImpl implements NerdTranslatorService {
                 log.info("Part of speech received: " + partOfSpeech);
             }
         }
+        log.info("NerdTranslatorServiceImpl getTranslation end");
         return translationData;
     }
 
@@ -73,7 +75,7 @@ public class NerdTranslatorServiceImpl implements NerdTranslatorService {
     }
 
     private String getPartOfSpeech(List<String> translatedWords) {
-        log.info("Trying to receive part of speech");
+        log.info("NerdTranslatorServiceImpl getPartOfSpeech start");
         String partOfSpeech = null;
         int translatedWordsSize = translatedWords.size();
         if (translatedWordsSize <= MAX_NUMBER_TO_GET_PART_OF_SPEECH) {
@@ -83,6 +85,7 @@ public class NerdTranslatorServiceImpl implements NerdTranslatorService {
                 partOfSpeech = getPartOfSpeechForTwoWords(translatedWords);
             }
         }
+        log.info("NerdTranslatorServiceImpl getPartOfSpeech end");
         return partOfSpeech;
     }
 

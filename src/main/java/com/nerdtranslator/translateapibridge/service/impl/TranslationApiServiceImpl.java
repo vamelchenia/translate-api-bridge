@@ -21,6 +21,7 @@ public class TranslationApiServiceImpl implements TranslationApiService {
 
     @Override
     public String getSingleTranslationFromApi(String originalText, String originalLanguage, String targetLanguage) {
+        log.info("TranslationApiServiceImpl getSingleTranslationFromApi start");
         try (TranslationServiceClient client = TranslationServiceClient.create(
                 TranslationServiceSettings
                         .newBuilder()
@@ -42,6 +43,7 @@ public class TranslationApiServiceImpl implements TranslationApiService {
                 log.error("An error occurred in translation API response: translation is empty");
                 throw new GoogleApiResponseException("translation API response: translation is empty");
             }
+            log.info("TranslationApiServiceImpl getSingleTranslationFromApi end");
             return translatedText;
         } catch (IOException e) {
             log.info("An error occurred in translation API response", e);
