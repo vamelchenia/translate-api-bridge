@@ -24,6 +24,7 @@ public class TextToSpeechApiServiceImpl implements TextToSpeechApiService {
 
     @Override
     public byte[] transformTextToSound(String textToTransfer, String langCode) {
+        log.info("TextToSpeechApiServiceImpl transformTextToSound start");
         byte[] speechResult = null;
         AudioEncoding audioEncoding = AudioEncoding.MP3;
         List<SsmlVoiceGender> genders = new ArrayList<>(
@@ -43,6 +44,7 @@ public class TextToSpeechApiServiceImpl implements TextToSpeechApiService {
             log.error("An error occurred in text to speech API response: voice isn't supported yet");
             throw new GoogleApiResponseException("text to speech API response: voice isn't supported yet");
         }
+        log.info("TextToSpeechApiServiceImpl transformTextToSound end");
         return speechResult;
     }
 

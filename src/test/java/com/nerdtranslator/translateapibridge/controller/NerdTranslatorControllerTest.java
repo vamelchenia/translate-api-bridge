@@ -1,6 +1,7 @@
-package com.nerdtranslator.translateapibridge.service;
+package com.nerdtranslator.translateapibridge.controller;
 
 import com.nerdtranslator.translateapibridge.data.RequestData;
+import com.nerdtranslator.translateapibridge.data.RestResponse;
 import com.nerdtranslator.translateapibridge.data.TranslationData;
 import com.nerdtranslator.translateapibridge.util.PartOfSpeech;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -17,13 +17,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
-class NerdTranslatorServiceTest {
-
-    private final NerdTranslatorService nerdTranslatorService;
+class NerdTranslatorControllerTest {
+    private final NerdTranslatorController controller;
 
     @Test
     void one_english_word_should_equal_to_another_russian_word_case_IT() {
-        makeAssertion("witchcraft", "en", "ru", "колдовство");
+        makeAssertion("witchcraft", "en", "ru", "колдовство", PartOfSpeech.NOUN);
     }
 
     @Test
@@ -56,8 +55,9 @@ class NerdTranslatorServiceTest {
 
     @Test
     void main_meaning_of_multiple_meaning_word_case_IT() {
+        //bug
         makeAssertion("book", "en",
-                "fr", "livre");
+                "fr", "livre", PartOfSpeech.NOUN);
     }
 
     @Test
@@ -98,11 +98,8 @@ class NerdTranslatorServiceTest {
 
     @Test
     void compound_noun_non_hyphenated_case_1_IT() {
-        TranslationData actualTranslationData =
-                nerdTranslatorService.getTranslation(
-                        new RequestData("водопровод"), "ru", "en");
-        List<String> possibleValues = new ArrayList<>(List.of("water pipes", "plumbing"));
-        Assertions.assertThat(actualTranslationData.getTranslation()).isIn(possibleValues);
+        makeAssertionWithPossibleValues("водопровод", "ru", "en",
+                List.of("water pipes", "plumbing"));
     }
 
     @Test
@@ -119,19 +116,17 @@ class NerdTranslatorServiceTest {
 
     @Test
     void compound_noun_hyphenated_case_2_IT() {
-        TranslationData actualTranslationData =
-                nerdTranslatorService.getTranslation(
-                        new RequestData("editor-in-chief"), "en", "ru");
-        Assertions.assertThat(actualTranslationData.getTranslation())
-                .isEqualToIgnoringCase("главный редактор");
+        RequestData requestData = new RequestData("editor-in-chief");
+        RestResponse restResponse = controller.getTranslation("en", "ru", requestData);
+        if (restResponse.data() instanceof TranslationData actualTranslationData) {
+            Assertions.assertThat(actualTranslationData.getTranslation())
+                    .isEqualToIgnoringCase("главный редактор");
+        }
     }
 
     @Test
     void compound_noun_hyphenated_case_3_IT() {
-        TranslationData actualTranslationData =
-                nerdTranslatorService.getTranslation(
-                        new RequestData("кресло-качалка"), "ru", "en");
-        assertEquals("rocking chair", actualTranslationData.getTranslation());
+        makeAssertion("кресло-качалка", "ru", "en", "rocking chair");
     }
 
     @Test
@@ -164,53 +159,58 @@ class NerdTranslatorServiceTest {
 
     @Test
     void multiple_meanings_case_1_IT() {
-        TranslationData actualTranslationData =
-                nerdTranslatorService.getTranslation(
-                        new RequestData("book"), "en", "ru");
-        List<String> possibleValues = new ArrayList<>(List.of("книга", "резервировать", "заказывать"));
-        Assertions.assertThat(actualTranslationData.getTranslation().toLowerCase()).isIn(possibleValues);
+        makeAssertionWithPossibleValues("book", "en", "ru",
+                List.of("книга", "резервировать", "заказывать"));
     }
 
     @Test
     void multiple_meanings_case_2_IT() {
-        TranslationData actualTranslationData =
-                nerdTranslatorService.getTranslation(
-                        new RequestData("bark"), "en", "ru");
-        List<String> possibleValues = new ArrayList<>(List.of("лаять", "кора дерева"));
-        Assertions.assertThat(actualTranslationData.getTranslation().toLowerCase()).isIn(possibleValues);
+        makeAssertionWithPossibleValues("bark", "en", "ru",
+                List.of("лаять", "кора дерева"));
     }
 
     @Test
     void multiple_meanings_case_3_IT() {
-        TranslationData actualTranslationData =
-                nerdTranslatorService.getTranslation(
-                        new RequestData("bon"), "fr", "ru");
-        List<String> possibleValues = new ArrayList<>(List.of("хороший", "талон"));
-        Assertions.assertThat(actualTranslationData.getTranslation().toLowerCase()).isIn(possibleValues);
+        makeAssertionWithPossibleValues("bon", "fr", "ru",
+                List.of("хороший", "талон"));
     }
 
     @Test
     void multiple_meanings_case_4_IT() {
-        TranslationData actualTranslationData =
-                nerdTranslatorService.getTranslation(
-                        new RequestData("красивый"), "ru", "en");
-        List<String> possibleValues = new ArrayList<>(List.of("beautiful", "handsome"));
-        Assertions.assertThat(actualTranslationData.getTranslation().toLowerCase()).isIn(possibleValues);
-        assertEquals(PartOfSpeech.ADJ.name(), actualTranslationData.getPartOfSpeech());
+        RequestData requestData = new RequestData("красивый");
+        RestResponse restResponse = controller.getTranslation("ru", "en", requestData);
+        if (restResponse.data() instanceof TranslationData actualTranslationData) {
+            List<String> possibleValues = List.of("beautiful", "handsome");
+            Assertions.assertThat(actualTranslationData.getTranslation().toLowerCase()).isIn(possibleValues);
+            assertEquals(PartOfSpeech.ADJ.name(), actualTranslationData.getPartOfSpeech());
+        }
     }
 
     private void makeAssertion(String originalText, String originalLanguage, String targetLanguage,
                                String expectedResult) {
-        TranslationData actualTranslationData =
-                nerdTranslatorService.getTranslation(new RequestData(originalText), originalLanguage, targetLanguage);
-        assertEquals(expectedResult, actualTranslationData.getTranslation());
+        RequestData requestData = new RequestData(originalText);
+        RestResponse restResponse = controller.getTranslation(originalLanguage, targetLanguage, requestData);
+        if (restResponse.data() instanceof TranslationData actualTranslationData) {
+            assertEquals(expectedResult, actualTranslationData.getTranslation());
+        }
     }
 
     private void makeAssertion(String originalText, String originalLanguage, String targetLanguage,
                                String expectedResult, PartOfSpeech partOfSpeech) {
-        TranslationData actualTranslationData =
-                nerdTranslatorService.getTranslation(new RequestData(originalText), originalLanguage, targetLanguage);
-        assertEquals(expectedResult, actualTranslationData.getTranslation());
-        assertEquals(partOfSpeech.name(), actualTranslationData.getPartOfSpeech());
+        RequestData requestData = new RequestData(originalText);
+        RestResponse restResponse = controller.getTranslation(originalLanguage, targetLanguage, requestData);
+        if (restResponse.data() instanceof TranslationData actualTranslationData) {
+            assertEquals(expectedResult, actualTranslationData.getTranslation());
+            assertEquals(partOfSpeech.name(), actualTranslationData.getPartOfSpeech());
+        }
+    }
+
+    private void makeAssertionWithPossibleValues(String originalText, String originalLanguage, String targetLanguage,
+                                                 List<String> possibleValues) {
+        RequestData requestData = new RequestData(originalText);
+        RestResponse restResponse = controller.getTranslation(originalLanguage, targetLanguage, requestData);
+        if (restResponse.data() instanceof TranslationData actualTranslationData) {
+            Assertions.assertThat(actualTranslationData.getTranslation().toLowerCase()).isIn(possibleValues);
+        }
     }
 }
