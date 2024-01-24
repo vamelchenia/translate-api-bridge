@@ -16,11 +16,11 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-public class LanguagesServiceImpl implements LanguagesService {
-    private static final Logger log = LoggerFactory.getLogger(LanguagesServiceImpl.class);
+public class TranslationLanguagesServiceImpl implements LanguagesService {
+    private static final Logger log = LoggerFactory.getLogger(TranslationLanguagesServiceImpl.class);
     @Override
     public Map<String, String> getSupportedLanguages() {
-        String filePath = "data/TranslationApiLanguages.json";
+        String filePath = "data/TranslationApiSupportedLanguages.json";
         Map<String, String> languageMap;
         try {
             ObjectMapper objectMapper = new ObjectMapper();

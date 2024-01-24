@@ -55,7 +55,6 @@ class NerdTranslatorControllerTest {
 
     @Test
     void main_meaning_of_multiple_meaning_word_case_IT() {
-        //bug
         makeAssertion("book", "en",
                 "fr", "livre", PartOfSpeech.NOUN);
     }
