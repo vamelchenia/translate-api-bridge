@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -24,7 +23,12 @@ public class NaturalLangApiServiceImpl implements NaturalLangApiService {
         log.info("NaturalLangApiServiceImpl analyzeText start");
         String result = null;
         try (LanguageServiceClient languageService = getLanguageService()) {
-            Document document = getDocument(textToAnalyze, textLanguage);
+            Document document = Document
+                    .newBuilder()
+                    .setContent(textToAnalyze)
+                    .setLanguage(textLanguage)
+                    .setType(Document.Type.PLAIN_TEXT)
+                    .build();
             AnalyzeSyntaxResponse response = languageService.analyzeSyntax(document);
             for (Token token : response.getTokensList()) {
                 if (token == null || token.getText().getContent().isEmpty()) {
@@ -48,26 +52,5 @@ public class NaturalLangApiServiceImpl implements NaturalLangApiService {
                         .newBuilder()
                         .setCredentialsProvider(authenticationProvider.getCredentialsProvider())
                         .build());
-    }
-
-    private static Document getDocument(String textToAnalyze, String textLanguage) {
-        List<String> supportedLanguages = List.of(
-                "zh", "zh-Hant", "en", "fr", "de", "it", "ja", "ko", "pt", "ru", "es");
-        Document document;
-        if (supportedLanguages.contains(textLanguage)) {
-            document = Document
-                    .newBuilder()
-                    .setContent(textToAnalyze)
-                    .setLanguage(textLanguage)
-                    .setType(Document.Type.PLAIN_TEXT)
-                    .build();
-        } else {
-            document = Document
-                    .newBuilder()
-                    .setContent(textToAnalyze)
-                    .setType(Document.Type.PLAIN_TEXT)
-                    .build();
-        }
-        return document;
     }
 }
