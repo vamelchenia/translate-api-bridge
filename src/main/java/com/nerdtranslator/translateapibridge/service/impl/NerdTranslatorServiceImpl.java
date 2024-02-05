@@ -3,10 +3,7 @@ package com.nerdtranslator.translateapibridge.service.impl;
 import com.nerdtranslator.translateapibridge.data.RequestData;
 import com.nerdtranslator.translateapibridge.data.TranslationData;
 import com.nerdtranslator.translateapibridge.exception.BadRequestException;
-import com.nerdtranslator.translateapibridge.service.NaturalLangApiService;
-import com.nerdtranslator.translateapibridge.service.TextToSpeechApiService;
-import com.nerdtranslator.translateapibridge.service.TranslationApiService;
-import com.nerdtranslator.translateapibridge.service.NerdTranslatorService;
+import com.nerdtranslator.translateapibridge.service.*;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +19,7 @@ public class NerdTranslatorServiceImpl implements NerdTranslatorService {
     private final TranslationApiService translationApiService;
     private final TextToSpeechApiService textToSpeechService;
     private final NaturalLangApiService naturalLanguageApiService;
+    private final SupportedLanguagesService supportedLanguagesService;
     private static final Logger log = LoggerFactory.getLogger(NerdTranslatorServiceImpl.class);
     private static final int MAX_NUMBER_TO_GET_AUDIO = 6;
     private static final int MAX_NUMBER_TO_GET_PART_OF_SPEECH = 2;
@@ -53,7 +51,7 @@ public class NerdTranslatorServiceImpl implements NerdTranslatorService {
                 log.info("Audio data received");
             }
 
-            String partOfSpeech = getPartOfSpeech(translatedWords);
+            String partOfSpeech = getPartOfSpeech(translatedWords, targetLanguage);
             if (partOfSpeech == null
                     || partOfSpeech.isEmpty()
                     || "X".equals(partOfSpeech)
@@ -74,40 +72,55 @@ public class NerdTranslatorServiceImpl implements NerdTranslatorService {
         return Arrays.stream(str.split("\\s+")).toList();
     }
 
-    private String getPartOfSpeech(List<String> translatedWords) {
+    private String getPartOfSpeech(List<String> translatedWords, String textLanguage) {
         log.info("NerdTranslatorServiceImpl getPartOfSpeech start");
+        textLanguage = filterTextLanguageCode(textLanguage);
         String partOfSpeech = null;
+        List<String> supportedLanguages =
+                supportedLanguagesService.getSupportedLanguagesForNaturalLanguageApi().values().stream().toList();
         int translatedWordsSize = translatedWords.size();
-        if (translatedWordsSize <= MAX_NUMBER_TO_GET_PART_OF_SPEECH) {
+        if (translatedWordsSize <= MAX_NUMBER_TO_GET_PART_OF_SPEECH && supportedLanguages.contains(textLanguage)) {
             if (translatedWordsSize == MINIMUM_WORDS_REQUIRED) {
-                partOfSpeech = getPartOfSpeechForOneWord(translatedWords.get(0));
+                partOfSpeech = getPartOfSpeechForOneWord(translatedWords.get(0), textLanguage);
             } else {
-                partOfSpeech = getPartOfSpeechForTwoWords(translatedWords);
+                partOfSpeech = getPartOfSpeechForTwoWords(translatedWords, textLanguage);
             }
         }
         log.info("NerdTranslatorServiceImpl getPartOfSpeech end");
         return partOfSpeech;
     }
 
-    private String getPartOfSpeechForOneWord(String word) {
+    private String filterTextLanguageCode(String textLanguage) {
+        if (textLanguage.contains("-")) {
+            if (textLanguage.equals("zh-CN")) {
+                textLanguage = "zh";
+            }
+            if (textLanguage.equals("zh-TW")) {
+                textLanguage = "zh-Hant";
+            }
+        }
+        return textLanguage;
+    }
+
+    private String getPartOfSpeechForOneWord(String word, String targetLanguage) {
         if (isOnlyOneTypeOfSymbols(word)) {
-            return naturalLanguageApiService.analyzeText(word);
+            return naturalLanguageApiService.analyzeText(word, targetLanguage);
         } else {
             String mainWord = word.substring(0, word.length() - 1);
             String lastSymbol = word.substring(word.length() - 1);
             if (isOnlyOneTypeOfSymbols(mainWord) && lastSymbol.matches("\\p{Punct}")) {
-                return naturalLanguageApiService.analyzeText(mainWord);
+                return naturalLanguageApiService.analyzeText(mainWord, targetLanguage);
             }
             return null;
         }
     }
 
-    private String getPartOfSpeechForTwoWords(List<String> translatedWords) {
+    private String getPartOfSpeechForTwoWords(List<String> translatedWords, String targetLanguage) {
         List<String> partsOfSpeech = new ArrayList<>();
         for (String word : translatedWords) {
             String response = null;
             if(isOnlyOneTypeOfSymbols(word)) {
-                response = naturalLanguageApiService.analyzeText(word);
+                response = naturalLanguageApiService.analyzeText(word, targetLanguage);
             }
             if (!"DET".equals(response)) {
                 partsOfSpeech.add(response);

@@ -19,21 +19,16 @@ public class NaturalLangApiServiceImpl implements NaturalLangApiService {
     private static final Logger log = LoggerFactory.getLogger(NaturalLangApiServiceImpl.class);
 
     @Override
-    public String analyzeText(String textToAnalyze) {
+    public String analyzeText(String textToAnalyze, String textLanguage) {
         log.info("NaturalLangApiServiceImpl analyzeText start");
         String result = null;
-        try (LanguageServiceClient languageService = LanguageServiceClient.create(
-                LanguageServiceSettings
-                        .newBuilder()
-                        .setCredentialsProvider(authenticationProvider.getCredentialsProvider())
-                        .build())) {
-
+        try (LanguageServiceClient languageService = getLanguageService()) {
             Document document = Document
                     .newBuilder()
                     .setContent(textToAnalyze)
+                    .setLanguage(textLanguage)
                     .setType(Document.Type.PLAIN_TEXT)
                     .build();
-
             AnalyzeSyntaxResponse response = languageService.analyzeSyntax(document);
             for (Token token : response.getTokensList()) {
                 if (token == null || token.getText().getContent().isEmpty()) {
@@ -49,5 +44,13 @@ public class NaturalLangApiServiceImpl implements NaturalLangApiService {
         }
         log.info("NaturalLangApiServiceImpl analyzeText end");
         return result;
+    }
+
+    private LanguageServiceClient getLanguageService() throws IOException {
+        return LanguageServiceClient.create(
+                LanguageServiceSettings
+                        .newBuilder()
+                        .setCredentialsProvider(authenticationProvider.getCredentialsProvider())
+                        .build());
     }
 }

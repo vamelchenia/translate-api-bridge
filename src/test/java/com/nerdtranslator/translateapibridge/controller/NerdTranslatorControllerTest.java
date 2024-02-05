@@ -22,7 +22,8 @@ class NerdTranslatorControllerTest {
 
     @Test
     void one_english_word_should_equal_to_another_russian_word_case_IT() {
-        makeAssertion("witchcraft", "en", "ru", "колдовство", PartOfSpeech.NOUN);
+        makeAssertion("witchcraft", "en",
+                "ru", "колдовство", PartOfSpeech.NOUN);
     }
 
     @Test
@@ -55,7 +56,6 @@ class NerdTranslatorControllerTest {
 
     @Test
     void main_meaning_of_multiple_meaning_word_case_IT() {
-        //bug
         makeAssertion("book", "en",
                 "fr", "livre", PartOfSpeech.NOUN);
     }
@@ -126,7 +126,8 @@ class NerdTranslatorControllerTest {
 
     @Test
     void compound_noun_hyphenated_case_3_IT() {
-        makeAssertion("кресло-качалка", "ru", "en", "rocking chair");
+        makeAssertion("кресло-качалка", "ru",
+                "en", "rocking chair");
     }
 
     @Test
@@ -137,7 +138,8 @@ class NerdTranslatorControllerTest {
 
     @Test
     void acronym_case_IT() {
-        makeAssertion("ADN", "fr", "en", "DNA");
+        makeAssertion("ADN", "fr",
+                "en", "DNA");
     }
 
     @Test

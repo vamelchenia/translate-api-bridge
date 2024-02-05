@@ -3,7 +3,7 @@ package com.nerdtranslator.translateapibridge.controller;
 import com.nerdtranslator.translateapibridge.data.RequestData;
 import com.nerdtranslator.translateapibridge.data.RestResponse;
 import com.nerdtranslator.translateapibridge.data.TranslationData;
-import com.nerdtranslator.translateapibridge.service.LanguagesService;
+import com.nerdtranslator.translateapibridge.service.SupportedLanguagesService;
 import com.nerdtranslator.translateapibridge.service.NerdTranslatorService;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -28,7 +28,7 @@ import java.util.Map;
 )
 public class NerdTranslatorController {
     private final NerdTranslatorService nerdTranslatorService;
-    private final LanguagesService languagesService;
+    private final SupportedLanguagesService supportedLanguagesService;
     private static final Logger log = LoggerFactory.getLogger(NerdTranslatorController.class);
 
     @PostMapping("/{originalLanguage}/{targetLanguage}")
@@ -54,7 +54,7 @@ public class NerdTranslatorController {
     @Operation(summary = "Get map of all supported languages with their codes")
     public RestResponse getAllSupportedLanguages() {
         log.info("Received request to /translation/languages");
-        Map<String, String> supportedLanguages = languagesService.getSupportedLanguages();
+        Map<String, String> supportedLanguages = supportedLanguagesService.getSupportedLanguagesForTranslationApi();
         return new RestResponse(HttpStatus.OK, supportedLanguages);
     }
 }
